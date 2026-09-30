@@ -1,0 +1,83 @@
+<div class="card">
+    <h2 style="color: #2563eb; margin-top: 0;">Welcome to Car Crash Java</h2>
+
+    <!-- Step 1: Initialize Grid -->
+    <div *ngIf="step === 1">
+        <h3>Please enter the width and height of the simulation field Boundaries:</h3>
+        <div style="margin-bottom: 15px;">
+            <label>Width: <input type="number" [(ngModel)]="width"></label>
+            <label>Height: <input type="number" [(ngModel)]="height"></label>
+        </div>
+        <button (click)="submitField()">Initialize Field</button>
+    </div>
+
+    <!-- Step 2: System Tracking Options -->
+    <div *ngIf="step === 2">
+        <p><strong>You have created a field of </strong> Size {{width}} x {{height}}</p>
+
+        <div class="flex-layout" *ngIf="!results">
+            <!-- Form Input -->
+            <div class="pane">
+                <h4 style="margin-top:0;">Add a Car to the field</h4>
+                <div class="err-msg" *ngIf="error">{{error}}</div>
+
+                <div style="margin-bottom: 10px;">
+                    <label style="display:block; font-size:13px;">Please enter the name of the car:</label>
+                    <input type="text" [(ngModel)]="carName" placeholder="e.g. A" style="width:80%;">
+                </div>
+
+                <div style="margin-bottom: 10px; display:flex;">
+                    <label style="font-size:13px;">X: <input type="number" [(ngModel)]="startX" style="width:45px;"></label>
+                    <label style="font-size:13px;">Y: <input type="number" [(ngModel)]="startY" style="width:45px;"></label>
+                    <label style="font-size:13px;">Heading:
+                        <select [(ngModel)]="direction">
+                            <option>N</option><option>E</option><option>S</option><option>W</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display:block; font-size:13px;">Please enter the commands for car:</label>
+                    <input type="text" [(ngModel)]="commands" placeholder="e.g. FFRFFFFRRL" style="width:80%;">
+                </div>
+
+                <button (click)="registerCar()" style="background-color:#059669;">Add Car to Field</button>
+            </div>
+
+            <!-- Current List View Registry -->
+            <div class="pane">
+                <h4 style="margin-top:0;">Current List of Cars</h4>
+                <p *ngIf="cars.length === 0" style="color:#6b7280; font-size:14px;">No vector configurations inside field memory.</p>
+                <ul style="padding-left:15px; font-family:monospace; font-size:13px;">
+                    <li *ngFor="let car of cars">
+                        - {{car.name}}, ({{car.initialX}},{{car.initialY}}) {{car.initialOrientation}}, {{car.commands}}
+                    </li>
+                </ul>
+                <button *ngIf="cars.length > 0" (click)="executeLoop()" style="width:100%; font-weight:bold; margin-top:10px;">Run Simulation</button>
+            </div>
+        </div>
+
+        <!-- Live Execution Reporting Page -->
+        <div class="pane" *ngIf="results" style="background:#f0fdf4; border-color:#bbf7d0; margin-top:20px;">
+            <h3 style="margin-top:0; color:#166534;">Simulation Outputs Received</h3>
+
+            <h4 style="margin-bottom:5px;">Original State of the car:</h4>
+            <ul style="padding-left:15px; font-family:monospace; font-size:13px; color:#4b5563;">
+                <li *ngFor="let car of cars">- {{car.name}}, ({{car.initialX}},{{car.initialY}}) {{car.initialOrientation}}, {{car.commands}}</li>
+            </ul>
+
+            <h4 style="margin-bottom:5px; margin-top:15px;">After simulation, the result is:</h4>
+            <ul style="padding-left:0; list-style-type:none; font-family:monospace;">
+                <li *ngFor="let res of results" style="padding: 6px 0; border-bottom: 1px dashed #e5e7eb;">
+                    <span *ngIf="!res.collided">- {{res.name}}, ({{res.currentX}},{{res.currentY}}) {{res.currentOrientation}}</span>
+                    <span *ngIf="res.collided" style="color:#dc2626; font-weight:bold;">
+            - {{res.name}}, collides with {{res.collidedWith.join(', ')}} at ({{res.currentX}},{{res.currentY}}) at step {{res.collisionStep}}
+          </span>
+                </li>
+            </ul>
+
+            <button (click)="wipe()" style="margin-top:15px; background-color:#4b5563;">Start Over</button>
+            <button (click)="exitApplication()" style="background-color: #dc2626;">Exit Simulation</button>
+        </div>
+    </div>
+</div>
