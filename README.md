@@ -1,5 +1,5 @@
 # drivingsimulation
-driving simulation program
+driving crash simulation program using Angular18 and SpringBoot micrservices,
 
  Functional Requirements
 
